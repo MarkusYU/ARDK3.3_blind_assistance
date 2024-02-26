@@ -46,7 +46,7 @@ public class LightshipNavMeshManager : MonoBehaviour
 
     [Tooltip("Size of the area to scan (width in meters of a square centered 1 meter in front of the player)")]
     [SerializeField]
-    private float _scanRange = 1.5f;
+    private float _scanRange = 5f;
 
     [Tooltip("Must be the same layer as meshes.")]
     [SerializeField]

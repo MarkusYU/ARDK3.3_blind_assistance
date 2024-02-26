@@ -57,6 +57,7 @@ public class NavMeshModel : MonoBehaviour
       const float rayLength = 100.0f;
 
       float halfRange = range / 2;
+      Debug.Log(range);
 
       // Calculate bounds for this scan on the grid
       var lowerBoundPosition = new Vector2(origin.x - halfRange, origin.z - halfRange);
@@ -238,7 +239,7 @@ public class NavMeshModel : MonoBehaviour
       var invalidPointsOnRight = FindInvalidPoints(invalidate, pointsOnRight);
 
       // If both sides have invalid points
-      if (invalidPointsOnLeft.Count > 3 && invalidPointsOnRight.Count > 3)
+      if (invalidPointsOnLeft.Count > 8 && invalidPointsOnRight.Count > 8)
       {
         var pathResult = ProcessDirectionalChecks(player_position_toTile, origin_toTile, invalidate);
         // Check the result from ProcessDirectionalChecks
@@ -255,7 +256,7 @@ public class NavMeshModel : MonoBehaviour
 
 
       }
-      else if (invalidPointsOnLeft.Count > invalidPointsOnRight.Count)
+      else if ((invalidPointsOnLeft.Count > invalidPointsOnRight.Count) && invalidPointsOnLeft.Count > 1)
       {
         var pathResult = ProcessDirectionalChecks(player_position_toTile, origin_toTile, invalidate);
         // If obstacle is found
@@ -264,13 +265,16 @@ public class NavMeshModel : MonoBehaviour
         }
         // If user is not facing the right direction of path
         else {
-          CallTTS($"Path at your {pathResult}");
-
+            // Check if 'pathResult' does not contain any of the specified strings
+            var disallowedStrings = new[] { "4", "5", "6", "7", "8" };
+            if (!disallowedStrings.Any(pathResult.Contains)) {
+                CallTTS($"Path at your {pathResult}");
+            }
         }
         
       }
       // If invalid points found on the right side
-      else if (invalidPointsOnLeft.Count < invalidPointsOnRight.Count)
+      else if ((invalidPointsOnLeft.Count < invalidPointsOnRight.Count) && invalidPointsOnRight.Count > 3)
       {
         var pathResult = ProcessDirectionalChecks(player_position_toTile, origin_toTile, invalidate);
         // If obstacle is found
@@ -279,11 +283,14 @@ public class NavMeshModel : MonoBehaviour
         }
         // If user is not facing the right direction of path
         else {
-          CallTTS($"Path at your {pathResult}");
-
+            // Check if 'pathResult' does not contain any of the specified strings
+            var disallowedStrings = new[] { "4", "5", "6", "7", "8" };
+            if (!disallowedStrings.Any(pathResult.Contains)) {
+                CallTTS($"Path at your {pathResult}");
+            }
         }
       }
-      else if (invalidPointsInMiddle.Any())
+      else if (invalidPointsInMiddle.Count > 5)
       {
          CallTTS("Obstacle right ahead");
       }
@@ -683,9 +690,18 @@ public class NavMeshModel : MonoBehaviour
             var invalidPoints = FindInvalidPoints(invalidate, points);
 
             // Collect angles with fewer than 5 invalid points
-            if (invalidPoints.Count < 15)
+            if (i == 0) {
+              if (invalidPoints.Count < 15)
+              {
+                  validAngles.Add(angle);
+              }
+            }
+            else 
             {
+              if ((invalidPoints.Count < 10))
+              {
                 validAngles.Add(angle);
+              } 
             }
             Debug.Log($"Angle: {angle} degrees, Invalid Points count: {invalidPoints.Count}");
         }

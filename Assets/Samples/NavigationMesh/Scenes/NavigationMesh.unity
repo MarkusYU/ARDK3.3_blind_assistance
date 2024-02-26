@@ -1427,12 +1427,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -6783156556088234213, guid: 92df391c1600a4e45b690c3e03492888, type: 3}
       propertyPath: _scanRange
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -6783156556088234213, guid: 92df391c1600a4e45b690c3e03492888, type: 3}
       propertyPath: _ttsManager
       value: 
       objectReference: {fileID: 1825859386}
+    - target: {fileID: -6783156556088234213, guid: 92df391c1600a4e45b690c3e03492888, type: 3}
+      propertyPath: _scanInterval
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: -6783156556088234213, guid: 92df391c1600a4e45b690c3e03492888, type: 3}
       propertyPath: _lightshipNavMesh
       value: 
@@ -1491,7 +1495,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1036115691456179861, guid: 92df391c1600a4e45b690c3e03492888, type: 3}
       propertyPath: _scanRange
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1036115691456179861, guid: 92df391c1600a4e45b690c3e03492888, type: 3}
       propertyPath: _flatFloorTolerance
