@@ -974,6 +974,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1460620059}
   - component: {fileID: 1460620060}
+  - component: {fileID: 1460620061}
   m_Layer: 0
   m_Name: Meshing
   m_TagString: Untagged
@@ -1015,6 +1016,30 @@ MonoBehaviour:
   m_TextureCoordinates: 0
   m_Colors: 0
   m_ConcurrentQueueSize: 4
+--- !u!114 &1460620061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1460620058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86b456713bd4d4c31b3cb04c67d82381, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetFrameRate: 10
+  _maximumIntegrationDistance: 10
+  _voxelSize: 0.025
+  _enableDistanceBasedVolumetricCleanup: 1
+  _meshBlockSize: 1.4
+  _meshCullingDistance: 0
+  _enableMeshDecimation: 1
+  _isMeshFilteringEnabled: 0
+  _isFilteringAllowListEnabled: 0
+  _allowList: []
+  _isFilteringBlockListEnabled: 0
+  _blockList: []
 --- !u!1 &1547555691
 GameObject:
   m_ObjectHideFlags: 0
@@ -1427,7 +1452,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -6783156556088234213, guid: 92df391c1600a4e45b690c3e03492888, type: 3}
       propertyPath: _scanRange
-      value: 10
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -6783156556088234213, guid: 92df391c1600a4e45b690c3e03492888, type: 3}
+      propertyPath: _stepHeight
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: -6783156556088234213, guid: 92df391c1600a4e45b690c3e03492888, type: 3}
       propertyPath: _ttsManager
@@ -1440,6 +1469,10 @@ PrefabInstance:
     - target: {fileID: -6783156556088234213, guid: 92df391c1600a4e45b690c3e03492888, type: 3}
       propertyPath: _lightshipNavMesh
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: -6783156556088234213, guid: 92df391c1600a4e45b690c3e03492888, type: 3}
+      propertyPath: _flatFloorTolerance
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 1036115691456179860, guid: 92df391c1600a4e45b690c3e03492888, type: 3}
       propertyPath: m_RootOrder

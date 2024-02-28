@@ -1,9 +1,9 @@
 {
   "dependencies": {
     "com.nianticlabs.lightship": {
-      "version": "file:/Users/mac_sun/Documents/study/UCL_CS/Year3/individual_project/ARDK download/2.13_ardk3.3/ardk-upm-3.3.0.tgz",
+      "version": "https://github.com/niantic-lightship/ardk-upm.git",
       "depth": 0,
-      "source": "local-tarball",
+      "source": "git",
       "dependencies": {
         "com.unity.editorcoroutines": "1.0.0",
         "com.unity.xr.arfoundation": "5.1.0",
@@ -13,16 +13,18 @@
         "com.unity.xr.core-utils": "2.1.0",
         "com.unity.xr.management": "4.0.1",
         "com.unity.nuget.newtonsoft-json": "3.2.1"
-      }
+      },
+      "hash": "7cc172749e6577d934f1af4719c2de9fb78a205f"
     },
     "com.nianticlabs.lightship.sharedar": {
-      "version": "file:/Users/mac_sun/Documents/study/UCL_CS/Year3/individual_project/ARDK download/2.13_ardk3.3/sharedar-upm-3.3.0.tgz",
+      "version": "https://github.com/niantic-lightship/sharedar-upm.git",
       "depth": 0,
-      "source": "local-tarball",
+      "source": "git",
       "dependencies": {
         "com.nianticlabs.lightship": "3.3.0-2402121803",
         "com.unity.netcode.gameobjects": "1.2.0"
-      }
+      },
+      "hash": "8f1873a13c5ab23a0ecb547178c803cf456930ff"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -49,7 +51,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collab-proxy": {
-      "version": "2.1.0",
+      "version": "2.2.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -80,7 +82,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.rider": {
-      "version": "3.0.25",
+      "version": "3.0.27",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -165,7 +167,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.7.5",
+      "version": "1.7.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {

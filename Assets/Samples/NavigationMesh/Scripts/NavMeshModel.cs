@@ -75,8 +75,8 @@ public class NavMeshModel : MonoBehaviour
       var player_position_toTile = Utils.PositionToTile(player_position, Settings.TileSize);
 
       // Parameters for searching rectangle
-      float rectangleWidth = 3;
-      float rectangleHeight = 15;
+      float rectangleWidth = 3.5f;
+      float rectangleHeight = 25;
 
       var pointsInMiddle = GeneratePointsInMiddleOfRectangle(player_position_toTile, origin_toTile, rectangleWidth, rectangleHeight);
       var result = GeneratePointsOnSidesOfRectangle(player_position_toTile, origin_toTile, rectangleWidth, rectangleHeight);
@@ -239,7 +239,7 @@ public class NavMeshModel : MonoBehaviour
       var invalidPointsOnRight = FindInvalidPoints(invalidate, pointsOnRight);
 
       // If both sides have invalid points
-      if (invalidPointsOnLeft.Count > 8 && invalidPointsOnRight.Count > 8)
+      if (invalidPointsOnLeft.Count > 20 && invalidPointsOnRight.Count > 20)
       {
         var pathResult = ProcessDirectionalChecks(player_position_toTile, origin_toTile, invalidate);
         // Check the result from ProcessDirectionalChecks
@@ -256,7 +256,7 @@ public class NavMeshModel : MonoBehaviour
 
 
       }
-      else if ((invalidPointsOnLeft.Count > invalidPointsOnRight.Count) && invalidPointsOnLeft.Count > 1)
+      else if ((invalidPointsOnLeft.Count > (invalidPointsOnRight.Count + 1)) && invalidPointsOnLeft.Count > 0)
       {
         var pathResult = ProcessDirectionalChecks(player_position_toTile, origin_toTile, invalidate);
         // If obstacle is found
@@ -264,17 +264,17 @@ public class NavMeshModel : MonoBehaviour
           CallTTS("Obstacle to your front left");
         }
         // If user is not facing the right direction of path
-        else {
-            // Check if 'pathResult' does not contain any of the specified strings
-            var disallowedStrings = new[] { "4", "5", "6", "7", "8" };
-            if (!disallowedStrings.Any(pathResult.Contains)) {
-                CallTTS($"Path at your {pathResult}");
-            }
-        }
+        // else {
+        //     // Check if 'pathResult' does not contain any of the specified strings
+        //     var disallowedStrings = new[] { "4", "5", "6", "7", "8" };
+        //     if (!disallowedStrings.Any(pathResult.Contains)) {
+        //         CallTTS($"Path at your {pathResult}");
+        //     }
+        // }
         
       }
       // If invalid points found on the right side
-      else if ((invalidPointsOnLeft.Count < invalidPointsOnRight.Count) && invalidPointsOnRight.Count > 3)
+      else if (((invalidPointsOnLeft.Count + 1) < invalidPointsOnRight.Count) && invalidPointsOnRight.Count > 3)
       {
         var pathResult = ProcessDirectionalChecks(player_position_toTile, origin_toTile, invalidate);
         // If obstacle is found
@@ -282,13 +282,13 @@ public class NavMeshModel : MonoBehaviour
           CallTTS("Obstacle to your front right");
         }
         // If user is not facing the right direction of path
-        else {
-            // Check if 'pathResult' does not contain any of the specified strings
-            var disallowedStrings = new[] { "4", "5", "6", "7", "8" };
-            if (!disallowedStrings.Any(pathResult.Contains)) {
-                CallTTS($"Path at your {pathResult}");
-            }
-        }
+        // else {
+        //     // Check if 'pathResult' does not contain any of the specified strings
+        //     var disallowedStrings = new[] { "4", "5", "6", "7", "8" };
+        //     if (!disallowedStrings.Any(pathResult.Contains)) {
+        //         CallTTS($"Path at your {pathResult}");
+        //     }
+        // }
       }
       else if (invalidPointsInMiddle.Count > 5)
       {
@@ -621,13 +621,13 @@ public class NavMeshModel : MonoBehaviour
     private void CallTTS(string ttsMessage)
     {
       // If time interval from the start of last call is greater than 4s
-      if (Time.time - _lastTTSCallTime >= 4.0f)
+      if (Time.time - _lastTTSCallTime >= 5.0f)
       {
           Debug.Log(ttsMessage);
           _ttsManager.SynthesizeAndPlay(ttsMessage, model, voice, speedSliderValue);
           // Update the last TTS call time
           if (ttsMessage.Length > 40) {
-            _lastTTSCallTime = Time.time + 2.0f;
+            _lastTTSCallTime = Time.time + 3.0f;
           }
           else {
             _lastTTSCallTime = Time.time;
