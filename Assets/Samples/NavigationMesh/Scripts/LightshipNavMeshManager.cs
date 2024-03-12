@@ -62,7 +62,7 @@ public class LightshipNavMeshManager : MonoBehaviour
     [SerializeField] private TTSManager _ttsManager;
     private ModelSettings _settings;
 
-    private float _lastScan;
+    private float _lastScan = 0.0f;
 
     /// <summary>
     /// A reference to the <c>LightshipNavMesh</c> that is being managed by this LightshipNavMeshManager
@@ -95,7 +95,8 @@ public class LightshipNavMeshManager : MonoBehaviour
 
         // The origin of the scan should be in front of the player
         var origin = playerPosition + Vector3.ProjectOnPlane(playerForward, Vector3.up).normalized;
-
+        // Debug.Log(origin);
+        // Debug.Log(playerPosition);
         _lightshipNavMesh.Scan(origin, playerPosition, range: _scanRange);
     }
 
@@ -105,6 +106,7 @@ public class LightshipNavMeshManager : MonoBehaviour
             return;
 
         _lastScan = Time.time;
+
         UpdateNavMesh();
     }
 }

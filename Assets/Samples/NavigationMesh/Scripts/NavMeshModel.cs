@@ -57,7 +57,7 @@ public class NavMeshModel : MonoBehaviour
       const float rayLength = 100.0f;
 
       float halfRange = range / 2;
-      Debug.Log(range);
+      // Debug.Log(range);
 
       // Calculate bounds for this scan on the grid
       var lowerBoundPosition = new Vector2(origin.x - halfRange, origin.z - halfRange);
@@ -103,6 +103,7 @@ public class NavMeshModel : MonoBehaviour
             origin.y,
             coords.y * tileSize + tileHalfSize
           );
+          // Debug.Log($"position: {position}");
 
           var arrayIndex = y * w + x;
 
@@ -110,7 +111,8 @@ public class NavMeshModel : MonoBehaviour
             Debug.DrawLine(position + Vector3.down, position + 2*Vector3.down, Color.green, 0.5f);
 
           // Raycast for height
-          var elevation =
+          Vector3 Vector1 = new Vector3(0, -1, 0);
+          var elevation = 
             Physics.Raycast
             (
               new Ray(position, Vector3.down),
@@ -703,7 +705,7 @@ public class NavMeshModel : MonoBehaviour
                 validAngles.Add(angle);
               } 
             }
-            Debug.Log($"Angle: {angle} degrees, Invalid Points count: {invalidPoints.Count}");
+            // Debug.Log($"Angle: {angle} degrees, Invalid Points count: {invalidPoints.Count}");
         }
 
         // Prioritize angles based on their closeness to 12 o'clock (0/360 degrees)

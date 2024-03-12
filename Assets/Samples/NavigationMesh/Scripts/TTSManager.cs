@@ -8,6 +8,8 @@ public class TTSManager : MonoBehaviour
     [SerializeField] private TTSVoice voice = TTSVoice.Alloy;
     [SerializeField, Range(0.25f, 4.0f)] private float speed = 1f;
     
+    private string lastSpokenText = string.Empty;
+
     private void OnEnable()
     {
         if (!openAIWrapper) this.openAIWrapper = FindObjectOfType<OpenAIWrapper>();
@@ -16,12 +18,19 @@ public class TTSManager : MonoBehaviour
 
     public async void SynthesizeAndPlay(string text)
     {
+        if (lastSpokenText == "Start scene description: " && (text.StartsWith("Obstacle") || text.StartsWith("No")))
+        {
+            Debug.LogWarning("Text starting with 'obstacle' or 'no' cannot be spoken after 'Start scene description: '.");
+            return;
+        }
+
         audioPlayer.gameObject.SetActive(true);
         byte[] audioData = await openAIWrapper.RequestTextToSpeech(text, model, voice, speed);
         if (audioData != null)
         {
             Debug.Log("Playing audio.");
             audioPlayer.ProcessAudioBytes(audioData);
+            lastSpokenText = text;
         }
         else
         {
