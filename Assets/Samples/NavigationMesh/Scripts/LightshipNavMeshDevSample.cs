@@ -6,8 +6,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
-using System.Collections;
-using System.Collections.Generic;
 using System;
 
 /// <summary>
@@ -48,7 +46,6 @@ public class LightshipNavMeshDevSample : MonoBehaviour
     
 
     private bool hasPlayedAudio = false;
-    private bool hasInitialized = false;
     private bool screenshotTaken = false;
 
     private void Awake(){

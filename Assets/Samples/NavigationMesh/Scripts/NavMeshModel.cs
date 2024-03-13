@@ -8,7 +8,6 @@ using UnityEngine;
 
 using Random = UnityEngine.Random;
 using System.Collections;
-using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -18,7 +17,6 @@ public class NavMeshModel : MonoBehaviour
   {
     // AudioPlayer parameter
     private float _lastTTSCallTime = 0f;
-    private string inputText = "hi";
     private int speedSliderValue = 1;
     private TTSModel model = TTSModel.TTS_1;
     private TTSVoice voice = TTSVoice.Alloy;

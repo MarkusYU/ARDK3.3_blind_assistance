@@ -8,7 +8,6 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 using System.Collections;
-using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
