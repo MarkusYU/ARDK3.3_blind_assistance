@@ -126,6 +126,7 @@ public class LightshipNavMeshDevSample : MonoBehaviour
         }
     }
 
+    // RunCaptureAndAnalyzeImage is connected to the scene description button in the scene
     public void RunCaptureAndAnalyzeImage()
     {
         string sceneDescriptionText = "Start scene description: ";
@@ -133,7 +134,8 @@ public class LightshipNavMeshDevSample : MonoBehaviour
         StartCoroutine(CaptureAndAnalyzeImage());
 
     }
-
+    
+    // Capture the scene image and send to OpenAI GPT4-vision API for response
     public IEnumerator CaptureAndAnalyzeImage()
     {
         yield return new WaitForSeconds(1f);
@@ -143,7 +145,6 @@ public class LightshipNavMeshDevSample : MonoBehaviour
             Debug.LogError("Camera is not assigned.");
             yield break;
         }
-
 
         // Set up the RenderTexture
         RenderTexture renderTexture = new RenderTexture(Screen.width, Screen.height, 24);

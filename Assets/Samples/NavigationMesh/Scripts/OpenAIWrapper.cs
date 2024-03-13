@@ -22,6 +22,7 @@ public class OpenAIWrapper : MonoBehaviour
     private float speed = 1f;
     private readonly string outputFormat = "mp3";
 
+    // Text-to-speech API
     public async Task<byte[]> RequestTextToSpeech(string text)
     {
         using var httpClient = new HttpClient();

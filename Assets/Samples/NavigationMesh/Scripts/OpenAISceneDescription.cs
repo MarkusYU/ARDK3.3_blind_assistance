@@ -13,7 +13,7 @@ public class OpenAISceneDescription : MonoBehaviour
     public void GetDescriptionText()
     {
         Debug.Log("Example image");
-        StartCoroutine(SceneDescriptionWithURL("https://github.com/gradio-app/gradio/raw/main/demo/image_mod/images/lion.jpg"));
+        StartCoroutine(SceneDescriptionWithURL("https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"));
     }
 
     public IEnumerator SceneDescriptionWithURL(string imageUrl)
