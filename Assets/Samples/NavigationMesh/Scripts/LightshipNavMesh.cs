@@ -28,6 +28,8 @@ public class LightshipNavMesh
   
   private PathFinding _pathFinding;
 
+  private string pathResult = "";
+
   /// The configuration of the NavMeshModel.
   public ModelSettings Settings
   {
@@ -266,8 +268,14 @@ public class LightshipNavMesh
   // Add player position as parameter
   public void Scan(Vector3 origin, Vector3 player_position, float range)
   {
-    HashSet<Vector2Int> nodesDeleted = _model.Scan(origin, player_position, range);
+    pathResult = _model.Scan(origin, player_position, range);
+    // Debug.Log(pathResult);
     RecalculateArea();
+  }
+
+  public string getPathResult()
+  {
+    return pathResult;
   }
 
   /// Removes all surfaces from the LightshipNavMesh.

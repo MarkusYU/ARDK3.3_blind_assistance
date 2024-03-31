@@ -7,7 +7,7 @@ using System;
 public class OpenAISceneDescription : MonoBehaviour
 {
     private string openAIURL = "https://api.openai.com/v1/";
-    private string apiKey = "";
+    private string apiKey = "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";
 
 
     public void GetDescriptionText()
@@ -53,7 +53,7 @@ public class OpenAISceneDescription : MonoBehaviour
     public IEnumerator SceneDescriptionBase64(string base64Image, Action<string> callback)
     {
         // Construct the JSON payload
-        string jsonPayload = $"{{\"model\":\"gpt-4-vision-preview\",\"messages\":[{{\"role\":\"user\",\"content\":[{{\"type\":\"text\",\"text\":\"Can you tell me is there a walkable sidewalk of more than 10m (not road for cars) in this direction? Can you also tell me what is displayed on this image? Please using no more than 20 words in total and do not include any punctuation beyond full stops and commas in the answer. Start with there is/is no walkable sidewalk in this direction.\"}},{{\"type\":\"image_url\",\"image_url\":\"data:image/jpeg;base64,{base64Image}\"}}]}}],\"max_tokens\":300}}";
+        string jsonPayload = $"{{\"model\":\"gpt-4-vision-preview\",\"messages\":[{{\"role\":\"user\",\"content\":[{{\"type\":\"text\",\"text\":\"Can you tell me is there a walkable sidewalk of more than 10m (not road for cars) in this direction? Can you also tell me what is displayed on this image and their position to user? Please using no more than 30 words in total and do not include any punctuation beyond full stops and commas in the answer.Do not mention blue tiles. Start with there is/is no walkable path in this direction.\"}},{{\"type\":\"image_url\",\"image_url\":\"data:image/jpeg;base64,{base64Image}\"}}]}}],\"max_tokens\":300}}";
         
         using (UnityWebRequest www = new UnityWebRequest(openAIURL + "chat/completions", "POST"))
         {

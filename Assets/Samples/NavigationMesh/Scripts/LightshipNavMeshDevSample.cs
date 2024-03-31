@@ -39,6 +39,7 @@ public class LightshipNavMeshDevSample : MonoBehaviour
 
     [SerializeField] private OpenAISceneDescription openAISceneDescription;
     private string inputText = "Starting navigation assistance";
+    private string noButtonText = "No button here.";
     private int speedSliderValue = 1;
     private TTSModel model = TTSModel.TTS_1;
     private TTSVoice voice = TTSVoice.Alloy;
@@ -47,6 +48,7 @@ public class LightshipNavMeshDevSample : MonoBehaviour
 
     private bool hasPlayedAudio = false;
     private bool screenshotTaken = false;
+    
 
     private void Awake(){
         //Get the input actions.
@@ -97,30 +99,32 @@ public class LightshipNavMeshDevSample : MonoBehaviour
             return;
         else{
             //project the touch point from screen space into 3d and pass that to your agent as a destination
-            Ray ray = _camera.ScreenPointToRay(_primaryTouch.ReadValue<Vector2>());
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit) &&
-                _navMeshManager.LightshipNavMesh.IsOnNavMesh(hit.point, 0.2f) &&
-                !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
-            {
-                if (_creature == null )
-                {
-                    //TODO: Add the is there enough space to place.
-                    //have a nice fits/dont fit in the space.
+            // Ray ray = _camera.ScreenPointToRay(_primaryTouch.ReadValue<Vector2>());
+            // RaycastHit hit;
+            // if (Physics.Raycast(ray, out hit) &&
+            //     _navMeshManager.LightshipNavMesh.IsOnNavMesh(hit.point, 0.2f) &&
+            //     !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+            // {
+            //     if (_creature == null )
+            //     {
+            //         //TODO: Add the is there enough space to place.
+            //         //have a nice fits/dont fit in the space.
 
-                    _creature = Instantiate(agentPrefab);
-                    _creature.transform.position = hit.point;
-                    _agent = _creature.GetComponent<LightshipNavMeshAgent>();
-                    visualization.SetActive(true);
+            //         _creature = Instantiate(agentPrefab);
+            //         _creature.transform.position = hit.point;
+            //         _agent = _creature.GetComponent<LightshipNavMeshAgent>();
+            //         visualization.SetActive(true);
                     
 
-                }
-                else
-                {
-                    _agent.SetDestination(hit.point);
-                }
-            }
+            //     }
+            //     else
+            //     {
+            //         _agent.SetDestination(hit.point);
+            //     }
+            // }
+            ttsManager.SynthesizeAndPlay(noButtonText, model, voice, speedSliderValue);
         }
+        
     }
 
     // RunCaptureAndAnalyzeImage is connected to the scene description button in the scene
@@ -130,6 +134,22 @@ public class LightshipNavMeshDevSample : MonoBehaviour
         ttsManager.SynthesizeAndPlay(sceneDescriptionText, model, voice, speedSliderValue);
         StartCoroutine(CaptureAndAnalyzeImage());
 
+    }
+
+    public void RunPathDirection()
+    {
+        // string sceneDescriptionText = "no button here, please tap elsewhere. ";
+        // ttsManager.SynthesizeAndPlay(sceneDescriptionText, model, voice, speedSliderValue);
+        string direction = _navMeshManager.getPathResult();
+        if (direction != "none") {
+            string pathDirection = "Path at your" + direction;
+            ttsManager.SynthesizeAndPlay(pathDirection, model, voice, speedSliderValue);
+
+        } else {
+            string pathDirection = "No Path found";
+            ttsManager.SynthesizeAndPlay(pathDirection, model, voice, speedSliderValue);
+
+        }
     }
     
     // Capture the scene image and send to OpenAI GPT4-vision API for response

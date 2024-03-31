@@ -64,6 +64,8 @@ public class LightshipNavMeshManager : MonoBehaviour
 
     private float _lastScan = 0.0f;
 
+    private string pathResult = "";
+
     /// <summary>
     /// A reference to the <c>LightshipNavMesh</c> that is being managed by this LightshipNavMeshManager
     /// </summary>
@@ -108,6 +110,12 @@ public class LightshipNavMeshManager : MonoBehaviour
         _lastScan = Time.time;
 
         UpdateNavMesh();
+    }
+
+    public string getPathResult()
+    {
+        pathResult = _lightshipNavMesh.getPathResult();
+        return pathResult;
     }
 }
 

@@ -28,6 +28,7 @@ public class NavMeshModel : MonoBehaviour
     public List<Surface> Surfaces { get; }
     private int _nextSurfaceId = 0;
     private bool _visualise;
+    private int consecutiveFrames = 0;
 
     public readonly ModelSettings Settings;
 
@@ -45,8 +46,9 @@ public class NavMeshModel : MonoBehaviour
       _visualise = !_visualise;
     }
 
-    public HashSet<Vector2Int> Scan(Vector3 origin, Vector3 player_position, float range)
+    public string Scan(Vector3 origin, Vector3 player_position, float range)
     {
+      consecutiveFrames++;
       // Cache parameters
       var kernelSize = Settings.KernelSize;
       var kernelHalfSize = kernelSize / 2;
@@ -71,12 +73,14 @@ public class NavMeshModel : MonoBehaviour
       // Calculate tile coordinate of player position and forward position
       var origin_toTile = Utils.PositionToTile(origin, Settings.TileSize);
       var player_position_toTile = Utils.PositionToTile(player_position, Settings.TileSize);
+      // Debug.Log($"player: {player_position_toTile}");
 
       // Parameters for searching rectangle
-      float rectangleWidth = 3.5f;
-      float rectangleHeight = 25;
+      float rectangleWidth = 3.3f;
+      float rectangleWidthForClearPath = 4.5f;
+      float rectangleHeight = 27;
 
-      var pointsInMiddle = GeneratePointsInMiddleOfRectangle(player_position_toTile, origin_toTile, rectangleWidth, rectangleHeight);
+      var pointsInMiddle = GeneratePointsInMiddleOfRectangle(player_position_toTile, origin_toTile, rectangleWidthForClearPath, rectangleHeight);
       var result = GeneratePointsOnSidesOfRectangle(player_position_toTile, origin_toTile, rectangleWidth, rectangleHeight);
       var pointsOnLeft = result.leftPoints;
       var pointsOnRight = result.rightPoints;
@@ -235,33 +239,33 @@ public class NavMeshModel : MonoBehaviour
 
       // Find invalid points on left and right side
       var invalidPointsInMiddle = FindInvalidPoints(invalidate, pointsInMiddle);
+      // foreach (Vector2 point in invalidPointsInMiddle)
+      // {
+      //     Debug.Log($"Invalid Point: {point}");
+      // }
+      List<Vector2> closest18Points = FindClosest18PointsToOrigin(player_position_toTile, invalidPointsInMiddle);
+      // Check if these points can form a 4x4 area
+      bool canForm4x4 = CanForm4x4Area(closest18Points);
+      // Debug.Log($"Can form 4x4 area: {canForm4x4}");
+
       var invalidPointsOnLeft = FindInvalidPoints(invalidate, pointsOnLeft);
       var invalidPointsOnRight = FindInvalidPoints(invalidate, pointsOnRight);
-
+      // Debug.Log(consecutiveFrames);
       // If both sides have invalid points
-      if (invalidPointsOnLeft.Count > 20 && invalidPointsOnRight.Count > 20)
+      if (canForm4x4 && consecutiveFrames >= 3)
       {
-        var pathResult = ProcessDirectionalChecks(player_position_toTile, origin_toTile, invalidate);
-        // Check the result from ProcessDirectionalChecks
-        if (pathResult == "none")
-        {
-            // If the no other path, give prompt "No available path ahead"
-            CallTTS("No available path ahead.");
-        }
-        else
-        {
-            // If a path is found at a specific direction
-            CallTTS($"No available path ahead. Path found at {pathResult}");
-        }
-
+        CallTTS("No available path ahead.");
+        
+        consecutiveFrames = 0;
 
       }
       else if ((invalidPointsOnLeft.Count > (invalidPointsOnRight.Count + 1)) && invalidPointsOnLeft.Count > 0)
       {
         var pathResult = ProcessDirectionalChecks(player_position_toTile, origin_toTile, invalidate);
         // If obstacle is found
-        if (pathResult == "12 o'clock" || pathResult == "none") {
+        if ((pathResult == "12 o'clock" || pathResult == "none") && consecutiveFrames >= 3) {
           CallTTS("Obstacle to your front left");
+          consecutiveFrames = 0;
         }
         // If user is not facing the right direction of path
         // else {
@@ -278,8 +282,9 @@ public class NavMeshModel : MonoBehaviour
       {
         var pathResult = ProcessDirectionalChecks(player_position_toTile, origin_toTile, invalidate);
         // If obstacle is found
-        if (pathResult == "12 o'clock" || pathResult == "none") {
+        if ((pathResult == "12 o'clock" || pathResult == "none") && consecutiveFrames >= 3) {
           CallTTS("Obstacle to your front right");
+          consecutiveFrames = 0;
         }
         // If user is not facing the right direction of path
         // else {
@@ -290,12 +295,15 @@ public class NavMeshModel : MonoBehaviour
         //     }
         // }
       }
-      else if (invalidPointsInMiddle.Count > 5)
+      else if ((invalidPointsInMiddle.Count > 5) && consecutiveFrames >= 3)
       {
          CallTTS("Obstacle right ahead");
+         consecutiveFrames = 0;
       }
-      return removedNodes;
+      var pathResultReturn = ProcessDirectionalChecks(player_position_toTile, origin_toTile, invalidate);
+      return pathResultReturn;
     }
+
 
     /// Removes all surfaces from the board.
     public void Clear()
@@ -636,7 +644,7 @@ public class NavMeshModel : MonoBehaviour
       }
       else
       {
-          Debug.Log("Waiting to call TTS again...");
+          // Debug.Log("Waiting to call TTS again...");
       }
     }
 
@@ -691,14 +699,14 @@ public class NavMeshModel : MonoBehaviour
 
             // Collect angles with fewer than 5 invalid points
             if (i == 0) {
-              if (invalidPoints.Count < 15)
+              if (invalidPoints.Count < 4)
               {
                   validAngles.Add(angle);
               }
             }
             else 
             {
-              if ((invalidPoints.Count < 10))
+              if ((invalidPoints.Count < 4))
               {
                 validAngles.Add(angle);
               } 
@@ -751,6 +759,38 @@ public class NavMeshModel : MonoBehaviour
         if(clockPosition == 0) return "12 o'clock";
       
         return $"{clockPosition} o'clock";
+    }
+
+    // Improvement for giving clear prompts when no path ahead
+    public static List<Vector2> FindClosest18PointsToOrigin(Vector2 origin, List<Vector2> points)
+    {
+        if (points == null || points.Count < 18)
+        {
+            return new List<Vector2>();
+        }
+
+        // Sort points by distance from the origin
+        List<Vector2> sortedPoints = points.OrderBy(p => Vector2.Distance(origin, p)).ToList();
+
+        // Take the first 18 points after sorting
+        return sortedPoints.Take(18).ToList();
+    }
+
+    public static bool CanForm4x4Area(List<Vector2> points)
+    {
+        if (points.Count < 18)
+        {
+            return false;
+        }
+
+        // Calculate the bounding box of the points
+        float minX = points.Min(p => p.x);
+        float maxX = points.Max(p => p.x);
+        float minY = points.Min(p => p.y);
+        float maxY = points.Max(p => p.y);
+
+        // Check if the bounding box can contain a 4x4 square
+        return (maxX - minX >= 3) && (maxY - minY >= 3);
     }
 
 }
