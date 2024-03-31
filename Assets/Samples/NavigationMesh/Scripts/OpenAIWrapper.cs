@@ -16,7 +16,7 @@ public class TTSPayload
 
 public class OpenAIWrapper : MonoBehaviour
 {
-    private string openAIKey = "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";
+    private string openAIKey = "";
     private TTSModel model = TTSModel.TTS_1;
     private TTSVoice voice = TTSVoice.Alloy;
     private float speed = 1f;
