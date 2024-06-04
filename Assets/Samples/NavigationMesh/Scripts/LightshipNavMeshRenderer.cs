@@ -58,7 +58,6 @@ public class LightshipNavMeshRenderer : MonoBehaviour
     private void UpdateMesh()
     {
         //this will build a mesh for the LightshipNavMesh nav tiles
-        //you can copy and customise this if you would like to stylise the navigation mesh surface.
         var vertices = new List<Vector3>();
         var triangles = new List<int>();
         var vIndex = 0;

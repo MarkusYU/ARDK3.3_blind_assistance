@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// This class uses code from the TTSManager class of the OpenAI-Text-To-Speech-for-Unity project.
+/// Available at: https://github.com/mapluisch/OpenAI-Text-To-Speech-for-Unity
+/// <summary>
 public class TTSManager : MonoBehaviour
 {
     private OpenAIWrapper openAIWrapper;
@@ -24,26 +28,21 @@ public class TTSManager : MonoBehaviour
             Debug.LogWarning("Currently speaking or text starting with 'obstacle' or 'no' cannot be spoken after 'Start scene description: '.");
             return;
         }
-
-        isSpeaking = true; // Set the flag to true as speech starts
+        isSpeaking = true;
 
         audioPlayer.gameObject.SetActive(true);
         byte[] audioData = await openAIWrapper.RequestTextToSpeech(text, model, voice, speed);
         if (audioData != null)
         {
-            // Debug.Log("Playing audio.");
             audioPlayer.ProcessAudioBytes(audioData);
             lastSpokenText = text;
-            // Assume you have an event or a method to hook when the audio finishes playing
-            // You should set isSpeaking back to false there. Example:
-            // audioPlayer.OnAudioFinished += () => { isSpeaking = false; };
         }
         else
         {
             Debug.LogError("Failed to get audio data from OpenAI.");
         }
 
-        isSpeaking = false; // Reset the flag when done, or in an event if the player supports it
+        isSpeaking = false;
     }
 
     public async void SynthesizeAndPlay(string text, TTSModel model, TTSVoice voice, float speed)

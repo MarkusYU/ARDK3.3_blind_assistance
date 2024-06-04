@@ -1,0 +1,10 @@
+diff a/Assets/Samples/NavigationMesh/Scripts/OpenAISceneDescription.cs b/Assets/Samples/NavigationMesh/Scripts/OpenAISceneDescription.cs	(rejected hunks)
+@@ -7,7 +7,7 @@ using System;
+ public class OpenAISceneDescription : MonoBehaviour
+ {
+     private string openAIURL = "https://api.openai.com/v1/";
+-    private string apiKey = "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";
++    private string apiKey = "";
+ 
+ 
+     public void GetDescriptionText()

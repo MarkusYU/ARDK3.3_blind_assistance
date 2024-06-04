@@ -1,18 +1,18 @@
 // Copyright 2022-2024 Niantic.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using UnityEngine;
-
 using Random = UnityEngine.Random;
 using System.Collections;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-
+/// <summary>
+/// This class is built on top of the NavMeshModel class of the Lightship ARDK Samples project.
+/// Available at: https://github.com/niantic-lightship/ardk-samples
+/// </summary>
 public class NavMeshModel : MonoBehaviour
   {
     // AudioPlayer parameter
@@ -21,7 +21,6 @@ public class NavMeshModel : MonoBehaviour
     private TTSModel model = TTSModel.TTS_1;
     private TTSVoice voice = TTSVoice.Alloy;
     private TTSManager _ttsManager;
-
     public SpatialTree SpatialTree { get; }
 
     // Internal container for all surfaces.
@@ -57,7 +56,6 @@ public class NavMeshModel : MonoBehaviour
       const float rayLength = 100.0f;
 
       float halfRange = range / 2;
-      // Debug.Log(range);
 
       // Calculate bounds for this scan on the grid
       var lowerBoundPosition = new Vector2(origin.x - halfRange, origin.z - halfRange);
@@ -73,17 +71,18 @@ public class NavMeshModel : MonoBehaviour
       // Calculate tile coordinate of player position and forward position
       var origin_toTile = Utils.PositionToTile(origin, Settings.TileSize);
       var player_position_toTile = Utils.PositionToTile(player_position, Settings.TileSize);
-      // Debug.Log($"player: {player_position_toTile}");
 
-      // Parameters for searching rectangle
+      // Parameters for the search rectangle
       float rectangleWidth = 3.3f;
       float rectangleWidthForClearPath = 4.5f;
       float rectangleHeight = 27;
 
-      var pointsInMiddle = GeneratePointsInMiddleOfRectangle(player_position_toTile, origin_toTile, rectangleWidthForClearPath, rectangleHeight);
-      var result = GeneratePointsOnSidesOfRectangle(player_position_toTile, origin_toTile, rectangleWidth, rectangleHeight);
-      var pointsOnLeft = result.leftPoints;
-      var pointsOnRight = result.rightPoints;
+      var pointsInMiddle = GetPointsForClearPath(
+        player_position_toTile, origin_toTile, rectangleWidthForClearPath, rectangleHeight);
+      var pointsInsideRectangle = GetPointsForCheckingObstacle(
+        player_position_toTile, origin_toTile, rectangleWidth, rectangleHeight);
+      var pointsOnLeft = pointsInsideRectangle.leftPoints;
+      var pointsOnRight = pointsInsideRectangle.rightPoints;
 
       // Bounds of the search area
       var w = upperBounds.x - lowerBounds.x;
@@ -105,7 +104,6 @@ public class NavMeshModel : MonoBehaviour
             origin.y,
             coords.y * tileSize + tileHalfSize
           );
-          // Debug.Log($"position: {position}");
 
           var arrayIndex = y * w + x;
 
@@ -237,25 +235,19 @@ public class NavMeshModel : MonoBehaviour
         MergeNodes(eligible);
       }
 
-      // Find invalid points on left and right side
-      var invalidPointsInMiddle = FindInvalidPoints(invalidate, pointsInMiddle);
-      // foreach (Vector2 point in invalidPointsInMiddle)
-      // {
-      //     Debug.Log($"Invalid Point: {point}");
-      // }
-      List<Vector2> closest18Points = FindClosest18PointsToOrigin(player_position_toTile, invalidPointsInMiddle);
-      // Check if these points can form a 4x4 area
-      bool canForm4x4 = CanForm4x4Area(closest18Points);
-      // Debug.Log($"Can form 4x4 area: {canForm4x4}");
-
+      // Find invalid points for obstacle avoiding
       var invalidPointsOnLeft = FindInvalidPoints(invalidate, pointsOnLeft);
       var invalidPointsOnRight = FindInvalidPoints(invalidate, pointsOnRight);
-      // Debug.Log(consecutiveFrames);
-      // If both sides have invalid points
+
+      // Find invalid points for clear path
+      var invalidPointsInMiddle = FindInvalidPoints(invalidate, pointsInMiddle);
+      List<Vector2> closest18Points = FindClosest18PointsToOrigin(player_position_toTile, invalidPointsInMiddle);
+
+      // Check if these points can form a 4x4 area
+      bool canForm4x4 = CanForm4x4Area(closest18Points);
       if (canForm4x4 && consecutiveFrames >= 3)
       {
         CallTTS("No available path ahead.");
-        
         consecutiveFrames = 0;
 
       }
@@ -267,15 +259,7 @@ public class NavMeshModel : MonoBehaviour
           CallTTS("Obstacle to your front left");
           consecutiveFrames = 0;
         }
-        // If user is not facing the right direction of path
-        // else {
-        //     // Check if 'pathResult' does not contain any of the specified strings
-        //     var disallowedStrings = new[] { "4", "5", "6", "7", "8" };
-        //     if (!disallowedStrings.Any(pathResult.Contains)) {
-        //         CallTTS($"Path at your {pathResult}");
-        //     }
-        // }
-        
+      
       }
       // If invalid points found on the right side
       else if (((invalidPointsOnLeft.Count + 1) < invalidPointsOnRight.Count) && invalidPointsOnRight.Count > 3)
@@ -303,7 +287,6 @@ public class NavMeshModel : MonoBehaviour
       var pathResultReturn = ProcessDirectionalChecks(player_position_toTile, origin_toTile, invalidate);
       return pathResultReturn;
     }
-
 
     /// Removes all surfaces from the board.
     public void Clear()
@@ -462,10 +445,6 @@ public class NavMeshModel : MonoBehaviour
         Vector2 corner2 = userPosition - perpendicular * rectangleWidth / 2;
         Vector2 corner3 = corner1 + direction * rectangleHeight;
         Vector2 corner4 = corner2 + direction * rectangleHeight;
-        // Debug.Log($"Corner1: ({corner1.x}, {corner1.y})");
-        // Debug.Log($"Corner2: ({corner2.x}, {corner2.y})");
-        // Debug.Log($"Corner3: ({corner3.x}, {corner3.y})");
-        // Debug.Log($"Corner4: ({corner4.x}, {corner4.y})");
 
         // Approximate bounding area for checking points inside it
         float minX = Mathf.Min(corner1.x, corner2.x, corner3.x, corner4.x);
@@ -478,11 +457,10 @@ public class NavMeshModel : MonoBehaviour
           for (int y = (int)Mathf.Floor(minY); y <= (int)Mathf.Ceil(maxY); y++)
           {
             Vector2 point = new Vector2(x, y);
-            // If the point is inside the searching rectangle
+            // If the point is inside the search rectangle
             if (IsPointInRectangle(point, corner1, corner2, corner3, corner4))
             {
                 points.Add(point);
-                // Debug.Log($"Print Point: ({point.x}, {point.y})");
             }
           }
         }
@@ -491,7 +469,7 @@ public class NavMeshModel : MonoBehaviour
     }
 
     // Finding points coordinates in the middle of rectangle
-    public List<Vector2> GeneratePointsInMiddleOfRectangle(Vector2 userPosition, Vector2 forwardPoint, float rectangleWidth, float rectangleHeight)
+    public List<Vector2> GetPointsForClearPath(Vector2 userPosition, Vector2 forwardPoint, float rectangleWidth, float rectangleHeight)
     {
         List<Vector2> points = new List<Vector2>();
 
@@ -520,7 +498,6 @@ public class NavMeshModel : MonoBehaviour
             if (IsPointInRectangle(point, corner1, corner2, corner3, corner4))
             {
                 points.Add(point);
-                // Debug.Log($"Print Point: ({point.x}, {point.y})");
             }
           }
         }
@@ -529,7 +506,7 @@ public class NavMeshModel : MonoBehaviour
     }
 
     // Finding points coordinates on the left side and right side of the rectangle
-    public (List<Vector2> leftPoints, List<Vector2> rightPoints) GeneratePointsOnSidesOfRectangle(Vector2 userPosition, Vector2 forwardPoint, float rectangleWidth, float rectangleHeight)
+    public (List<Vector2> leftPoints, List<Vector2> rightPoints) GetPointsForCheckingObstacle(Vector2 userPosition, Vector2 forwardPoint, float rectangleWidth, float rectangleHeight)
     {
         List<Vector2> leftPoints = new List<Vector2>();
         List<Vector2> rightPoints = new List<Vector2>();
@@ -594,10 +571,7 @@ public class NavMeshModel : MonoBehaviour
         // Compare the sum of the triangle areas with the rectangle's area
         float totalArea = area1 + area2 + area3 + area4;
         
-        // Allow for a small error margin due to floating-point arithmetic
         const float epsilon = 0.0001f;
-        
-        // If the total area is equal to the rectangle's area, the point is inside
         return Mathf.Abs(totalArea - fullArea) < epsilon;
     }
 
@@ -662,8 +636,7 @@ public class NavMeshModel : MonoBehaviour
         // Generate points at 30-degree intervals, moving clockwise
         for (int i = 0; i < 12; i++)
         {
-            float angle = initialAngle - (30f * i); // Subtract to move clockwise
-            // Ensure the angle is within the range [0, 360)
+            float angle = initialAngle - (30f * i);
             angle = (angle + 360f) % 360f;
 
             float radian = angle * Mathf.Deg2Rad;
@@ -733,7 +706,6 @@ public class NavMeshModel : MonoBehaviour
                 {
                     bestAngle = angle;
                 }
-                // If they are equally close, prefer the lower angle
                 else if (currentAngleDifference == bestAngleDifference && angle < bestAngle.Value)
                 {
                     bestAngle = angle;
@@ -748,7 +720,6 @@ public class NavMeshModel : MonoBehaviour
         }
         else
         {
-            // Convert the best angle to clock position and return it
             return AngleToClockPosition(bestAngle.Value);
         }
     }

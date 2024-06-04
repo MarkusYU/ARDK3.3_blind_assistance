@@ -1,0 +1,39 @@
+From 8f70a72ebc52d84c196f1379be2419c28d0a66f7 Mon Sep 17 00:00:00 2001
+From: Shoubo Yu <markusy733@gmail.com>
+Date: Sun, 31 Mar 2024 19:14:55 +0100
+Subject: [PATCH] update path direction function and obstacle ahead prompt
+
+---
+ Assets/Samples/NavigationMesh/Scripts/OpenAISceneDescription.cs | 2 +-
+ Assets/Samples/NavigationMesh/Scripts/OpenAIWrapper.cs          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Assets/Samples/NavigationMesh/Scripts/OpenAISceneDescription.cs b/Assets/Samples/NavigationMesh/Scripts/OpenAISceneDescription.cs
+index 7a99931..8261e82 100644
+--- a/Assets/Samples/NavigationMesh/Scripts/OpenAISceneDescription.cs
++++ b/Assets/Samples/NavigationMesh/Scripts/OpenAISceneDescription.cs
+@@ -7,7 +7,7 @@ using System;
+ public class OpenAISceneDescription : MonoBehaviour
+ {
+     private string openAIURL = "https://api.openai.com/v1/";
+-    private string apiKey = "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";
++    private string apiKey = "";
+ 
+ 
+     public void GetDescriptionText()
+diff --git a/Assets/Samples/NavigationMesh/Scripts/OpenAIWrapper.cs b/Assets/Samples/NavigationMesh/Scripts/OpenAIWrapper.cs
+index e18728a..34e7cbe 100644
+--- a/Assets/Samples/NavigationMesh/Scripts/OpenAIWrapper.cs
++++ b/Assets/Samples/NavigationMesh/Scripts/OpenAIWrapper.cs
+@@ -16,7 +16,7 @@ public class TTSPayload
+ 
+ public class OpenAIWrapper : MonoBehaviour
+ {
+-    private string openAIKey = "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";
++    private string openAIKey = "";
+     private TTSModel model = TTSModel.TTS_1;
+     private TTSVoice voice = TTSVoice.Alloy;
+     private float speed = 1f;
+-- 
+2.39.3 (Apple Git-145)
+

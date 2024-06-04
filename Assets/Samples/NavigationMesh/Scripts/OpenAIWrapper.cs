@@ -4,6 +4,10 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
 
+/// <summary>
+/// This class uses code from the OpenAIWrapper class of the OpenAI-Text-To-Speech-for-Unity project.
+/// Available at: https://github.com/mapluisch/OpenAI-Text-To-Speech-for-Unity
+/// <summary>
 [System.Serializable]
 public class TTSPayload
 {

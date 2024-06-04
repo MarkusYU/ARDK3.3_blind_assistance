@@ -1,7 +1,6 @@
 // Copyright 2022-2024 Niantic.
 using System.Collections;
 using System.Collections.Generic;
-// using Niantic.Lightship.AR.NavigationMesh;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -9,12 +8,8 @@ using UnityEngine.UI;
 using System;
 
 /// <summary>
-/// This sample shows how to quickly used Niantic's NavMesh to add user driven point and click navigation
-/// when you first touch the screen it will place your agent prefab
-/// then if you tap again the agent will walk to that location
-/// there is a toggle button to show hide the navigation mesh and path.
-/// It assumes the _agentPrefab has LightshipNavMeshAgent on it.
-/// You can overload it if you want to.
+/// This class is built on top of the LighshipNavMeshDevSample class of the Lightship ARDK Samples project.
+/// Available at: https://github.com/niantic-lightship/ardk-samples
 /// </summary>
 public class LightshipNavMeshDevSample : MonoBehaviour
 {
@@ -48,6 +43,8 @@ public class LightshipNavMeshDevSample : MonoBehaviour
 
     private bool hasPlayedAudio = false;
     private bool screenshotTaken = false;
+    private bool hasRunTest = false;
+    private string testInputText = "Test ttsmanager";
     
 
     private void Awake(){
@@ -59,24 +56,31 @@ public class LightshipNavMeshDevSample : MonoBehaviour
 
     void Update()
     {
-        // HandleTouch();
-
         // Play starting message only once at the begining
         if (!hasPlayedAudio)
         {
             Debug.Log("ttsManager");
             ttsManager.SynthesizeAndPlay(inputText, model, voice, speedSliderValue);
-            hasPlayedAudio = true; // Set the flag so it doesn't play again.
+            hasPlayedAudio = true;
         }
 
-        // if (!screenshotTaken) 
+        // if (!hasRunTest)
         // {
-        //     // CaptureAndAnalyzeImage();
-        //     string sceneDescriptionText = "Start scene description: ";
-        //     ttsManager.SynthesizeAndPlay(sceneDescriptionText, model, voice, speedSliderValue);
-        //     StartCoroutine(CaptureAndAnalyzeImage());
-        //     screenshotTaken = true; // Ensure this runs once
+        //     Debug.Log("Test TTS Manager");
+        //     ttsManager.SynthesizeAndPlay(testInputText, model, voice, speedSliderValue);
+
+        //     Debug.Log("Test CaptureAndAnalyzeImage");
+        //     TestCaptureAndAnalyzeImage();
+
+        //     Debug.Log("Test RunCaptureAndAnalyzeImage");
+        //     TestRunCaptureAndAnalyzeImage();
+
+        //     Debug.Log("Test RunPathDirection");
+        //     TestRunPathDirection();
+
+        //     hasRunTest = true; // Set the flag so it doesn't play again.
         // }
+        
     }
 
     public void ToggleVisualisation()
@@ -98,30 +102,6 @@ public class LightshipNavMeshDevSample : MonoBehaviour
         if (!_primaryTouch.WasPerformedThisFrame())
             return;
         else{
-            //project the touch point from screen space into 3d and pass that to your agent as a destination
-            // Ray ray = _camera.ScreenPointToRay(_primaryTouch.ReadValue<Vector2>());
-            // RaycastHit hit;
-            // if (Physics.Raycast(ray, out hit) &&
-            //     _navMeshManager.LightshipNavMesh.IsOnNavMesh(hit.point, 0.2f) &&
-            //     !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
-            // {
-            //     if (_creature == null )
-            //     {
-            //         //TODO: Add the is there enough space to place.
-            //         //have a nice fits/dont fit in the space.
-
-            //         _creature = Instantiate(agentPrefab);
-            //         _creature.transform.position = hit.point;
-            //         _agent = _creature.GetComponent<LightshipNavMeshAgent>();
-            //         visualization.SetActive(true);
-                    
-
-            //     }
-            //     else
-            //     {
-            //         _agent.SetDestination(hit.point);
-            //     }
-            // }
             ttsManager.SynthesizeAndPlay(noButtonText, model, voice, speedSliderValue);
         }
         
@@ -138,17 +118,13 @@ public class LightshipNavMeshDevSample : MonoBehaviour
 
     public void RunPathDirection()
     {
-        // string sceneDescriptionText = "no button here, please tap elsewhere. ";
-        // ttsManager.SynthesizeAndPlay(sceneDescriptionText, model, voice, speedSliderValue);
         string direction = _navMeshManager.getPathResult();
         if (direction != "none") {
             string pathDirection = "Path at your" + direction;
             ttsManager.SynthesizeAndPlay(pathDirection, model, voice, speedSliderValue);
-
         } else {
             string pathDirection = "No Path found";
             ttsManager.SynthesizeAndPlay(pathDirection, model, voice, speedSliderValue);
-
         }
     }
     
@@ -175,12 +151,6 @@ public class LightshipNavMeshDevSample : MonoBehaviour
         RenderTexture.active = renderTexture;
         screenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
         screenshot.Apply();
-
-        // byte[] bytes = screenshot.EncodeToPNG();
-        // Debug.Log("Screenshot captured!");
-        // string fileName = SnapshotName();
-        // // string fileName = "screenshot1.png";
-        // System.IO.File.WriteAllBytes(fileName, bytes);
 
         // Clean up
         _camera.targetTexture = null;
@@ -218,6 +188,21 @@ public class LightshipNavMeshDevSample : MonoBehaviour
         Debug.Log("Received description: " + result);
         string sceneDescriptionText = "Start scene description: " + result;
         ttsManager.SynthesizeAndPlay(result, model, voice, speedSliderValue);
+    }
+
+    public void TestCaptureAndAnalyzeImage()
+    {
+        StartCoroutine(CaptureAndAnalyzeImage());
+    }
+
+    public void TestRunCaptureAndAnalyzeImage()
+    {
+        RunCaptureAndAnalyzeImage();
+    }
+
+    public void TestRunPathDirection()
+    { 
+        RunPathDirection();
     }
 
 }

@@ -6,9 +6,8 @@ using UnityEngine;
 
 
 /// <summary>
-/// <c>LightshipNavMeshManager</c> is a <c>MonoBehaviour</c> that will create a <see cref="LightshipNavMesh"/> configured according to your settings and manage how it gets updated.
-/// You can add this component to a <c>GameObject</c> in your scene to use the  <see cref="LightshipNavMesh"/> features.
-/// You can pass this to any <c>GameObject</c> s that may need the  <see cref="LightshipNavMesh"/> e.g. your agents that handle moving across the board.
+/// This class is built on top of the LightshipNavMeshManager class of the Lightship ARDK Samples project.
+/// Available at: https://github.com/niantic-lightship/ardk-samples
 /// </summary>
 [PublicAPI]
 public class LightshipNavMeshManager : MonoBehaviour
@@ -63,7 +62,6 @@ public class LightshipNavMeshManager : MonoBehaviour
     private ModelSettings _settings;
 
     private float _lastScan = 0.0f;
-
     private string pathResult = "";
 
     /// <summary>
@@ -97,8 +95,6 @@ public class LightshipNavMeshManager : MonoBehaviour
 
         // The origin of the scan should be in front of the player
         var origin = playerPosition + Vector3.ProjectOnPlane(playerForward, Vector3.up).normalized;
-        // Debug.Log(origin);
-        // Debug.Log(playerPosition);
         _lightshipNavMesh.Scan(origin, playerPosition, range: _scanRange);
     }
 

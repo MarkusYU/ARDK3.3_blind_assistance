@@ -4,6 +4,10 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
 
+/// <summary>
+/// This class uses code from the AudioPlayer class of the OpenAI-Text-To-Speech-for-Unity project.
+/// Available at: https://github.com/mapluisch/OpenAI-Text-To-Speech-for-Unity
+/// <summary>
 [RequireComponent(typeof(AudioSource))]
 public class AudioPlayer : MonoBehaviour
 {

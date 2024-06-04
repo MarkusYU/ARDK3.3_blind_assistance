@@ -4,6 +4,10 @@ using UnityEngine.Networking;
 using System.Text;
 using System;
 
+/// <summary>
+/// This class uses the example code from the OpenAI GPT-4 API webpage.
+/// Available at: https://platform.openai.com/docs/guides/vision
+/// </summary>
 public class OpenAISceneDescription : MonoBehaviour
 {
     private string openAIURL = "https://api.openai.com/v1/";
@@ -45,7 +49,6 @@ public class OpenAISceneDescription : MonoBehaviour
                 int startIndex = responseText.IndexOf(searchString) + searchString.Length;
                 int endIndex = responseText.IndexOf("\"", startIndex);
                 string content = responseText.Substring(startIndex, endIndex - startIndex);
-                // Debug.Log("Content: " + content);
             }
         }
     }
@@ -53,7 +56,7 @@ public class OpenAISceneDescription : MonoBehaviour
     public IEnumerator SceneDescriptionBase64(string base64Image, Action<string> callback)
     {
         // Construct the JSON payload
-        string jsonPayload = $"{{\"model\":\"gpt-4-vision-preview\",\"messages\":[{{\"role\":\"user\",\"content\":[{{\"type\":\"text\",\"text\":\"Can you tell me is there a walkable sidewalk of more than 10m (not road for cars) in this direction? Can you also tell me what is displayed on this image and their position to user? Please using no more than 30 words in total and do not include any punctuation beyond full stops and commas in the answer.Do not mention blue tiles. Start with there is/is no walkable path in this direction.\"}},{{\"type\":\"image_url\",\"image_url\":\"data:image/jpeg;base64,{base64Image}\"}}]}}],\"max_tokens\":300}}";
+        string jsonPayload = $"{{\"model\":\"gpt-4-vision-preview\",\"messages\":[{{\"role\":\"user\",\"content\":[{{\"type\":\"text\",\"text\":\"Can you tell me is there a walkable sidewalk of more than 10m (not road for cars) in this direction? Can you also tell me what is displayed on this image? Please using no more than 20 words in total and do not include any punctuation beyond full stops and commas in the answer. Start with there is/is no walkable sidewalk in this direction.\"}},{{\"type\":\"image_url\",\"image_url\":\"data:image/jpeg;base64,{base64Image}\"}}]}}],\"max_tokens\":300}}";
         
         using (UnityWebRequest www = new UnityWebRequest(openAIURL + "chat/completions", "POST"))
         {
@@ -74,13 +77,12 @@ public class OpenAISceneDescription : MonoBehaviour
             else
             {
                 // Handle the response
-                // Debug.Log("Response: " + www.downloadHandler.text);
                 string responseText = www.downloadHandler.text;
                 string searchString = "\"content\": \"";
                 int startIndex = responseText.IndexOf(searchString) + searchString.Length;
                 int endIndex = responseText.IndexOf("\"", startIndex);
                 string content = responseText.Substring(startIndex, endIndex - startIndex);
-                // Debug.Log("Content: " + content);
+
                 callback?.Invoke(content);
                 
             }
